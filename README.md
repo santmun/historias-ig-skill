@@ -18,9 +18,8 @@ El skill te hace preguntas la primera vez para entender tu marca, y después sol
 
 ## Requisitos
 
-- [Claude Code](https://claude.ai/code) instalado
+- [Claude Code](https://claude.ai/code) instalado (con suscripción Pro o Max)
 - Python 3.10+
-- Una cuenta de [Anthropic](https://console.anthropic.com) con API key
 - *(Opcional)* Cuenta de [Kie AI](https://kie.ai) para fondos generados con IA
 
 ---
@@ -42,18 +41,15 @@ chmod +x setup.sh && ./setup.sh
 
 El script instala las dependencias, descarga las fuentes y copia el skill a Claude Code.
 
-### 3. Agrega tu API key
+### 3. *(Opcional)* Agrega Kie AI para fondos generados con IA
 
-Abre el archivo `.env` y pon tu API key de Anthropic:
+Si quieres que el skill genere fondos e ilustraciones automáticamente, abre `.env` y agrega tu key de [Kie AI](https://kie.ai):
 
-```
-ANTHROPIC_API_KEY=sk-ant-...
-```
-
-*(Opcional)* Si tienes Kie AI para fondos generados:
 ```
 KIE_AI_API_KEY=tu_key_aqui
 ```
+
+Sin esto, el skill funciona perfectamente usando tus propias fotos como fondo.
 
 ---
 
