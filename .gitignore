@@ -1,0 +1,11 @@
+.env
+__pycache__/
+*.pyc
+output/*
+!output/.gitkeep
+fotos/*
+!fotos/.gitkeep
+config.json
+catalogo.json
+fonts/*.ttf
+fonts/*.otf
