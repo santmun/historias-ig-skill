@@ -40,7 +40,7 @@ Si el usuario quiere otra, muestra las 3 mejores alternativas y deja elegir.
 **Paso 4 — Escanear fotos disponibles**
 
 ```bash
-python3 {{PROJ_DIR}}/scripts/scan_fotos.py --proj-dir {{PROJ_DIR}}
+python3 {{PROJ_DIR}}/scripts/scan_fotos.py --proj-dir {{PROJ_DIR}} 2>/dev/null || python {{PROJ_DIR}}/scripts/scan_fotos.py --proj-dir {{PROJ_DIR}}
 ```
 
 **Paso 5 — Crear el plan de slides**
@@ -93,16 +93,14 @@ Muestra el plan al usuario en formato legible (no JSON crudo) y pide confirmaci�
 **Paso 6 — Guardar el plan y generar**
 
 ```bash
-python3 {{PROJ_DIR}}/scripts/generate.py \
-  --plan {{PROJ_DIR}}/plan.json \
-  --proj-dir {{PROJ_DIR}}
+python3 {{PROJ_DIR}}/scripts/generate.py --plan {{PROJ_DIR}}/plan.json --proj-dir {{PROJ_DIR}} 2>/dev/null || python {{PROJ_DIR}}/scripts/generate.py --plan {{PROJ_DIR}}/plan.json --proj-dir {{PROJ_DIR}}
 ```
 
 **Paso 7 — Mostrar resultados**
 
 Muestra el slide 1 (hook) y el último (CTA). Luego:
 ```bash
-open {{PROJ_DIR}}/output/
+python3 -c "import subprocess,sys; p='{{PROJ_DIR}}/output'; subprocess.Popen(['open',p] if sys.platform=='darwin' else ['xdg-open',p] if sys.platform.startswith('linux') else ['explorer',p.replace('/','\\\\')])" 2>/dev/null || python -c "import subprocess,sys; p='{{PROJ_DIR}}/output'; subprocess.Popen(['open',p] if sys.platform=='darwin' else ['xdg-open',p] if sys.platform.startswith('linux') else ['explorer',p.replace('/','\\\\')])"
 ```
 
 ---
@@ -399,7 +397,7 @@ Crear `{{PROJ_DIR}}/config.json`:
 
 Escanear fotos:
 ```bash
-python3 {{PROJ_DIR}}/scripts/scan_fotos.py --proj-dir {{PROJ_DIR}}
+python3 {{PROJ_DIR}}/scripts/scan_fotos.py --proj-dir {{PROJ_DIR}} 2>/dev/null || python {{PROJ_DIR}}/scripts/scan_fotos.py --proj-dir {{PROJ_DIR}}
 ```
 
 Si no hay fotos: indicar que las agreguen en `{{PROJ_DIR}}/fotos/` antes de generar.

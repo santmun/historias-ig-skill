@@ -23,7 +23,7 @@ El skill te hace preguntas la primera vez para entender tu marca, y después sol
 - macOS o Linux *(Windows requiere WSL — ver nota abajo)*
 - *(Opcional)* Cuenta de [Kie AI](https://kie.ai) para fondos generados con IA
 
-> **Windows:** El skill no tiene soporte nativo en Windows todavía. Puedes usarlo instalando [WSL](https://learn.microsoft.com/es-es/windows/wsl/install) (Windows Subsystem for Linux) y siguiendo las instrucciones desde ahí.
+> **Windows:** Usa PowerShell y corre `.\setup.ps1` (ver sección de instalación).
 
 ---
 
@@ -38,8 +38,15 @@ cd ~/historias-ig
 
 ### 2. Corre el setup
 
+**macOS / Linux:**
 ```bash
 chmod +x setup.sh && ./setup.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+.\setup.ps1
 ```
 
 El script instala las dependencias, descarga las fuentes y copia el skill a Claude Code.
