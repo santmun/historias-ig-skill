@@ -55,11 +55,11 @@ def font(proj_dir: Path, size: int, bold: bool = False):
 def kie_generate(prompt: str, api_key: str) -> str | None:
     """Genera imagen con Kie AI y retorna la URL del resultado."""
     payload = json.dumps({
-        "model": "nano_banana_2",
+        "model": "nano-banana-2",
         "input": {
             "prompt": prompt + ", professional quality, no text",
             "aspect_ratio": "9:16",
-            "resolution": "1k",
+            "resolution": "1K",
             "output_format": "png",
         },
     }).encode()
@@ -74,7 +74,11 @@ def kie_generate(prompt: str, api_key: str) -> str | None:
     )
     try:
         resp = json.loads(urllib.request.urlopen(req, timeout=30).read())
-        task_id = resp.get("data", {}).get("taskId")
+        data = resp.get("data") or {}
+        task_id = data.get("taskId")
+        if not task_id:
+            print(f"  ⚠️  Kie AI: {resp.get('msg', 'sin task_id')}")
+            return None
     except Exception as e:
         print(f"  ⚠️  Kie AI error al crear tarea: {e}")
         return None
@@ -88,13 +92,17 @@ def kie_generate(prompt: str, api_key: str) -> str | None:
                 headers={"Authorization": f"Bearer {api_key}"},
             )
             data = json.loads(urllib.request.urlopen(poll, timeout=15).read())
-            state = data.get("data", {}).get("state")
+            inner = data.get("data") or {}
+            state = inner.get("state")
             if state == "success":
-                return data["data"]["resultUrls"][0]
+                result_json = inner.get("resultJson", "{}")
+                urls = json.loads(result_json).get("resultUrls", [])
+                return urls[0] if urls else None
             if state in ("failed", "error"):
+                print(f"  ⚠️  Kie AI tarea fallida: {inner.get('failMsg')}")
                 return None
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"  ⚠️  Kie AI poll error: {e}")
     return None
 
 
@@ -171,25 +179,26 @@ def render_slide(slide: dict, idx: int, total: int,
     texto_extra = slide.get("texto_extra", "")
 
     if tipo == "hook":
-        y = 140
-        draw_pill(draw, cfg.get("etiqueta_hook", "NUEVA HISTORIA"), y,
+        # Etiqueta en la parte superior
+        draw_pill(draw, cfg.get("etiqueta_hook", "NUEVA HISTORIA"), 120,
                   font(proj_dir, 34), PRIMARY)
-        y = 230
-        y = draw_text(draw, titulo, y, font(proj_dir, 88, bold=True), WHITE,
+        # Título grande centrado en la zona inferior (60% hacia abajo)
+        y = 820
+        y = draw_text(draw, titulo, y, font(proj_dir, 96, bold=True), WHITE,
                       max_w=960, stroke=1)
         if subtitulo:
-            y += 16
-            draw_text(draw, subtitulo, y, font(proj_dir, 88), PRIMARY,
+            y += 20
+            draw_text(draw, subtitulo, y, font(proj_dir, 80), PRIMARY,
                       max_w=960, stroke=2)
 
     elif tipo == "cta":
         cta_palabra = slide.get("cta_palabra", "PALABRA")
-        nombre_marca = cfg.get("nombre_marca", "@tumarca")
-        y = H // 2 - 220
-        draw_text(draw, titulo, y, font(proj_dir, 72, bold=True), WHITE, max_w=900)
-        y += 96
+        nombre_marca = cfg.get("instagram_user") or cfg.get("nombre_marca", "@tumarca")
+        y = 700
+        draw_text(draw, titulo, y, font(proj_dir, 86, bold=True), WHITE, max_w=900)
+        y += 160
         draw_text(draw, "Responde", y, font(proj_dir, 68), DIM)
-        y += 86
+        y += 100
         box_w, box_h = 520, 120
         bx = (W - box_w) // 2
         draw.rounded_rectangle([bx, y, bx + box_w, y + box_h], radius=24,
@@ -200,25 +209,26 @@ def render_slide(slide: dict, idx: int, total: int,
         draw.text((kx + 2, y + 26 + 2), cta_palabra, font=kw_f, fill=(0, 0, 0, 120))
         draw.text((kx, y + 26), cta_palabra, font=kw_f, fill=YELLOW,
                   stroke_width=2, stroke_fill=YELLOW)
-        y += box_h + 36
+        y += box_h + 48
         draw_text(draw, subtitulo or "y te mando el tutorial completo.", y,
-                  font(proj_dir, 58), DIM, max_w=880)
+                  font(proj_dir, 62), DIM, max_w=880)
         if nombre_marca:
-            draw_text(draw, nombre_marca, y + 90, font(proj_dir, 48), PRIMARY)
+            draw_text(draw, nombre_marca, y + 100, font(proj_dir, 52), PRIMARY)
 
     else:
         # Slides genéricos: problema, revelacion, beneficios, prueba
-        y = 260
+        # Contenido centrado en la zona media-baja del slide
+        y = 750
         if titulo:
-            y = draw_text(draw, titulo, y, font(proj_dir, 92, bold=True), WHITE,
+            y = draw_text(draw, titulo, y, font(proj_dir, 96, bold=True), WHITE,
                           max_w=940, stroke=1)
-            y += 20
+            y += 28
         if subtitulo:
             y = draw_text(draw, subtitulo, y, font(proj_dir, 72), PRIMARY,
                           max_w=900, stroke=2)
-            y += 24
+            y += 28
         if texto_extra:
-            draw_text(draw, texto_extra, y, font(proj_dir, 54), DIM, max_w=880)
+            draw_text(draw, texto_extra, y, font(proj_dir, 58), DIM, max_w=880)
 
     # ── Guardar ────────────────────────────────────────────────────────────────
     nombre = f"{idx:02d}-{tipo}.png"
@@ -258,12 +268,16 @@ def main():
             results: dict[int, str | None] = {}
 
             def gen(idx, slide):
-                prompt = slide["fondo_ia"]["prompt"]
-                url = kie_generate(prompt, kie_key)
-                if url:
-                    dest = output_dir / f"_bg_{idx:02d}.png"
-                    if download_image(url, dest):
-                        results[idx] = dest
+                try:
+                    prompt = slide["fondo_ia"]["prompt"]
+                    url = kie_generate(prompt, kie_key)
+                    if url:
+                        dest = output_dir / f"_bg_{idx:02d}.png"
+                        if download_image(url, dest):
+                            results[idx] = dest
+                            print(f"  ✅ Fondo IA slide {idx+1} listo")
+                except Exception as e:
+                    print(f"  ⚠️  Thread slide {idx+1} error: {e}")
 
             threads = [threading.Thread(target=gen, args=(i, s)) for i, s in ai_slides]
             for t in threads:
@@ -271,9 +285,10 @@ def main():
             for t in threads:
                 t.join()
 
-            for (idx, slide), dest in zip(ai_slides, results.values()):
-                key = slide["fondo_ia"]["prompt"]
-                kie_cache[key] = dest
+            for idx, slide in ai_slides:
+                if idx in results:
+                    key = slide["fondo_ia"]["prompt"]
+                    kie_cache[key] = results[idx]
 
     print(f"\n→ Renderizando {total} slides...")
     for i, slide in enumerate(slides, 1):

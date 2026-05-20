@@ -19,10 +19,10 @@ echo "  ✅ Dependencias listas"
 # 2. Fuentes (Space Grotesk via Google Fonts)
 FONTS_DIR="$PROJ_DIR/fonts"
 if [ ! -f "$FONTS_DIR/SpaceGrotesk-Variable.ttf" ]; then
-  echo "→ Descargando fuente Space Grotesk..."
-  curl -sL "https://github.com/floriankarsten/space-grotesk/raw/master/fonts/ttf/SpaceGrotesk-Regular.ttf" \
+  echo "→ Descargando fuente Space Grotesk (Google Fonts)..."
+  curl -sL "https://fonts.gstatic.com/s/spacegrotesk/v22/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUUsj.ttf" \
     -o "$FONTS_DIR/SpaceGrotesk-Variable.ttf"
-  curl -sL "https://github.com/floriankarsten/space-grotesk/raw/master/fonts/ttf/SpaceGrotesk-Bold.ttf" \
+  curl -sL "https://fonts.gstatic.com/s/spacegrotesk/v22/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj4PVksj.ttf" \
     -o "$FONTS_DIR/SpaceGrotesk-Bold.ttf"
   echo "  ✅ Fuentes descargadas"
 else
