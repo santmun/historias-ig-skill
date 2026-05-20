@@ -11,6 +11,15 @@ echo "  Instalador — Historias IG Skill"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 
+# 0. Verificar Python 3.10+
+echo "→ Verificando Python..."
+python3 -c "import sys; exit(0) if sys.version_info >= (3, 10) else exit(1)" 2>/dev/null || {
+  echo "  ❌ Python 3.10+ es requerido."
+  echo "     Instálalo desde https://python.org o con 'brew install python'"
+  exit 1
+}
+echo "  ✅ Python OK"
+
 # 1. Dependencias Python
 echo "→ Instalando dependencias Python..."
 pip3 install -r "$PROJ_DIR/requirements.txt" -q
@@ -18,13 +27,36 @@ echo "  ✅ Dependencias listas"
 
 # 2. Fuentes (Space Grotesk via Google Fonts)
 FONTS_DIR="$PROJ_DIR/fonts"
-if [ ! -f "$FONTS_DIR/SpaceGrotesk-Variable.ttf" ]; then
+mkdir -p "$FONTS_DIR"
+
+_check_font() {
+  local f="$1"
+  # Los archivos TTF válidos empiezan con bytes 00 01 00 00 o 00 00 01 00
+  # Si se descarga HTML en vez de la fuente, el archivo empieza con "<"
+  local first
+  first=$(head -c 5 "$f" 2>/dev/null)
+  if echo "$first" | grep -q "^<"; then
+    return 1  # Es HTML, no una fuente
+  fi
+  # Verificar tamaño mínimo (fuentes reales > 50KB)
+  local size
+  size=$(wc -c < "$f" 2>/dev/null || echo 0)
+  [ "$size" -gt 50000 ]
+}
+
+if [ ! -f "$FONTS_DIR/SpaceGrotesk-Variable.ttf" ] || ! _check_font "$FONTS_DIR/SpaceGrotesk-Variable.ttf"; then
   echo "→ Descargando fuente Space Grotesk (Google Fonts)..."
   curl -sL "https://fonts.gstatic.com/s/spacegrotesk/v22/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUUsj.ttf" \
     -o "$FONTS_DIR/SpaceGrotesk-Variable.ttf"
   curl -sL "https://fonts.gstatic.com/s/spacegrotesk/v22/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj4PVksj.ttf" \
     -o "$FONTS_DIR/SpaceGrotesk-Bold.ttf"
-  echo "  ✅ Fuentes descargadas"
+  if _check_font "$FONTS_DIR/SpaceGrotesk-Variable.ttf"; then
+    echo "  ✅ Fuentes descargadas"
+  else
+    echo "  ❌ Error al descargar fuentes (revisa tu conexión a internet)"
+    rm -f "$FONTS_DIR/SpaceGrotesk-Variable.ttf" "$FONTS_DIR/SpaceGrotesk-Bold.ttf"
+    exit 1
+  fi
 else
   echo "  ✅ Fuentes ya instaladas"
 fi

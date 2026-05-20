@@ -4,7 +4,7 @@ Canvas: 1080x1920 RGBA
 """
 
 from pathlib import Path
-from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 W, H = 1080, 1920
 
@@ -110,21 +110,6 @@ def draw_pill(draw, text: str, y: int, fnt, bg_color, text_color=(8, 8, 16)):
     draw.rounded_rectangle([px, y, px + pw, y + ph], radius=ph // 2, fill=(*bg_color, 230))
     draw.text((px + 26, y + 13), text, font=fnt, fill=text_color)
     return y + ph
-
-
-def rounded_insert(canvas: Image.Image, img_path: Path, x: int, y: int,
-                   w: int, h: int, radius: int = 28):
-    """Inserta imagen con esquinas redondeadas."""
-    img = Image.open(img_path).convert("RGBA")
-    r = max(w / img.width, h / img.height)
-    nw, nh = int(img.width * r), int(img.height * r)
-    img = img.resize((nw, nh), Image.LANCZOS)
-    l, t = (nw - w) // 2, (nh - h) // 2
-    img = img.crop((l, t, l + w, t + h))
-    mask = Image.new("L", (w, h), 0)
-    ImageDraw.Draw(mask).rounded_rectangle([0, 0, w, h], radius=radius, fill=255)
-    img.putalpha(mask)
-    canvas.alpha_composite(img, (x, y))
 
 
 def progress_bar(draw, current: int, total: int, primary_color):

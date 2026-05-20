@@ -29,7 +29,7 @@ El skill te hace preguntas la primera vez para entender tu marca, y después sol
 ### 1. Clona el repositorio
 
 ```bash
-git clone https://github.com/TU_USUARIO/historias-ig-skill.git ~/historias-ig
+git clone https://github.com/santmun/historias-ig-skill.git ~/historias-ig
 cd ~/historias-ig
 ```
 

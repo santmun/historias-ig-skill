@@ -41,7 +41,7 @@ sys.path.insert(0, str(PROJ_DIR / "scripts"))
 from utils import (
     W, H, load_config, colors_from_config, font as _font,
     new_canvas, load_bg, gradient_overlay, draw_text,
-    draw_pill, rounded_insert, progress_bar, save,
+    draw_pill, progress_bar, save,
 )
 from PIL import Image, ImageDraw
 
@@ -121,19 +121,6 @@ def download_image(url: str, dest: Path) -> bool:
 
 
 # ── Renderizado de slides ──────────────────────────────────────────────────────
-
-def highlight_words(text: str, keywords: list[str]) -> list[tuple[str, bool]]:
-    """Divide el texto en partes (texto, es_keyword)."""
-    if not keywords:
-        return [(text, False)]
-    parts = []
-    words = text.split()
-    for word in words:
-        clean = word.strip(".,!?¿¡:;")
-        is_kw = any(kw.lower() == clean.lower() for kw in keywords)
-        parts.append((word + " ", is_kw))
-    return parts
-
 
 def render_slide(slide: dict, idx: int, total: int,
                  proj_dir: Path, cfg: dict, colors: dict,
