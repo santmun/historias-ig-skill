@@ -41,6 +41,8 @@ chmod +x setup.sh && ./setup.sh
 
 El script instala las dependencias, descarga las fuentes y copia el skill a Claude Code.
 
+> **Importante:** Si tenías Claude Code abierto durante el setup, ciérralo y ábrelo de nuevo para que detecte el nuevo skill `/historias-ig`.
+
 ### 3. *(Opcional)* Agrega Kie AI para fondos generados con IA
 
 Si quieres que el skill genere fondos e ilustraciones automáticamente, abre `.env` y agrega tu key de [Kie AI](https://kie.ai):

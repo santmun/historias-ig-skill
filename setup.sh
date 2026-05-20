@@ -20,9 +20,10 @@ python3 -c "import sys; exit(0) if sys.version_info >= (3, 10) else exit(1)" 2>/
 }
 echo "  ✅ Python OK"
 
-# 1. Dependencias Python
+# 1. Dependencias Python (Pillow)
 echo "→ Instalando dependencias Python..."
-pip3 install -r "$PROJ_DIR/requirements.txt" -q
+python3 -m pip install -r "$PROJ_DIR/requirements.txt" -q --break-system-packages 2>/dev/null \
+  || python3 -m pip install -r "$PROJ_DIR/requirements.txt" -q
 echo "  ✅ Dependencias listas"
 
 # 2. Fuentes (Space Grotesk via Google Fonts)
