@@ -20,7 +20,10 @@ El skill te hace preguntas la primera vez para entender tu marca, y después sol
 
 - [Claude Code](https://claude.ai/code) instalado (con suscripción Pro o Max)
 - Python 3.10+
+- macOS o Linux *(Windows requiere WSL — ver nota abajo)*
 - *(Opcional)* Cuenta de [Kie AI](https://kie.ai) para fondos generados con IA
+
+> **Windows:** El skill no tiene soporte nativo en Windows todavía. Puedes usarlo instalando [WSL](https://learn.microsoft.com/es-es/windows/wsl/install) (Windows Subsystem for Linux) y siguiendo las instrucciones desde ahí.
 
 ---
 
