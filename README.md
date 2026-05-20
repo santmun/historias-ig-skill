@@ -27,33 +27,48 @@ El skill te hace preguntas la primera vez para entender tu marca, y después sol
 
 ---
 
-## Instalación (3 pasos)
+## Instalación
 
-### 1. Clona el repositorio
+### Opción A — Instalación con Claude Code (recomendado)
 
+Abre Claude Code, pega este mensaje y envíalo:
+
+```
+Clona https://github.com/santmun/historias-ig-skill.git en ~/historias-ig y corre el setup automáticamente según mi sistema operativo
+```
+
+Claude clonará el repositorio y ejecutará el instalador por ti.
+
+Cuando termine, **cierra y vuelve a abrir Claude Code** para que detecte el nuevo skill.
+
+---
+
+### Opción B — Instalación manual
+
+**1. Clona el repositorio**
 ```bash
 git clone https://github.com/santmun/historias-ig-skill.git ~/historias-ig
 cd ~/historias-ig
 ```
 
-### 2. Corre el setup
+**2. Corre el instalador**
 
-**macOS / Linux:**
+macOS / Linux:
 ```bash
 chmod +x setup.sh && ./setup.sh
 ```
 
-**Windows (PowerShell):**
+Windows (PowerShell):
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 .\setup.ps1
 ```
 
-El script instala las dependencias, descarga las fuentes y copia el skill a Claude Code.
+**3. Reinicia Claude Code** para que detecte el nuevo skill `/historias-ig`.
 
-> **Importante:** Si tenías Claude Code abierto durante el setup, ciérralo y ábrelo de nuevo para que detecte el nuevo skill `/historias-ig`.
+---
 
-### 3. *(Opcional)* Agrega Kie AI para fondos generados con IA
+### *(Opcional)* Agrega Kie AI para fondos generados con IA
 
 Si quieres que el skill genere fondos e ilustraciones automáticamente, abre `.env` y agrega tu key de [Kie AI](https://kie.ai):
 
